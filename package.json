@@ -1,7 +1,7 @@
 {
   "name": "proje-websitesi",
   "version": "0.1.0",
-  "homepage": "https://okanacer332.github.io/proje-websitesi",
+  "homepage": "https://proje.okanacer.com.tr",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
