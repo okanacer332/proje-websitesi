@@ -11,7 +11,6 @@ import {
     Button,
     AppBar,
     Toolbar,
-    Paper,
     Chip,
     Avatar,
     Step,
@@ -45,6 +44,13 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import AccessTimeIcon from '@mui/icons-material/AccessTime'; // Personel Verimliliği
+import VolumeOffIcon from '@mui/icons-material/VolumeOff'; // Gürültü Kirliliği
+import TrafficIcon from '@mui/icons-material/Traffic'; // Trafik Kirliliği
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'; // Görüntü ve Koku Kirliliği
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied'; // Vatandaş Memnuniyeti
+import LightbulbIcon from '@mui/icons-material/Lightbulb'; // Modern İmaj / İnovasyon
+import StarsIcon from '@mui/icons-material/Stars'; // Modern İmaj / Liderlik
 
 // --- Canlı Renk Paleti ---
 const colors = {
@@ -72,11 +78,14 @@ const theme = createTheme({
     },
     typography: {
         fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-        h1: { fontWeight: 800, color: colors.primaryDark },
-        h2: { fontWeight: 700, color: colors.primaryDark, letterSpacing: '-1px' },
-        h3: { fontWeight: 700, color: colors.primaryDark },
-        h4: { fontWeight: 600, color: colors.primary },
-        h5: { fontWeight: 600, color: colors.primaryDark },
+        h1: { fontWeight: 800, color: colors.primaryDark, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' } },
+        h2: { fontWeight: 700, color: colors.primaryDark, letterSpacing: '-1px', fontSize: { xs: '2rem', sm: '2.8rem', md: '3.5rem' } },
+        h3: { fontWeight: 700, color: colors.primaryDark, fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } },
+        h4: { fontWeight: 600, color: colors.primary, fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' } },
+        h5: { fontWeight: 600, color: colors.primaryDark, fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.6rem' } },
+        h6: { fontWeight: 600, fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } },
+        body1: { fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } },
+        subtitle1: { fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' } },
     },
     components: {
         MuiCard: {
@@ -98,25 +107,48 @@ const theme = createTheme({
                     fontSize: '0.9rem'
                 }
             }
-        }
+        },
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                },
+            },
+        },
     }
 });
 
 const StyledSection = styled('section')(({ theme, odd }) => ({
     padding: theme.spacing(10, 2),
-    backgroundColor: odd ? colors.white : 'transparent',
+    backgroundColor: odd ? colors.background : colors.white,
+    [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(6, 1),
+    },
 }));
 
 // --- GRAFİK BİLEŞENLERİ (ANA BİLEŞEN DIŞINA TAŞINDI) ---
 
 const ChartCard = ({ title, children }) => (
-    <Card sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ p: { xs: 1.5, sm: 2 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" align="center" sx={{ color: colors.primaryDark, mb: 2 }}>{title}</Typography>
-        <Box sx={{ flexGrow: 1, position: 'relative', minHeight: { xs: '200px', sm: '250px' } }}>
+        <Box sx={{ flexGrow: 1, position: 'relative', minHeight: { xs: '180px', sm: '200px', md: '250px' } }}>
             {children}
         </Box>
     </Card>
 );
+
+const BenefitCard = ({ icon, title, description, color = 'primary' }) => (
+    <Card sx={{ p: { xs: 1.5, sm: 2 }, height: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Avatar sx={{ bgcolor: theme.palette[color].main, width: { xs: 50, sm: 60 }, height: { xs: 50, sm: 60 }, mb: 2 }}>
+            {React.cloneElement(icon, { sx: { fontSize: { xs: 30, sm: 35 } } })}
+        </Avatar>
+        <Typography variant="h6" sx={{ color: colors.primaryDark, mb: 1 }}>{title}</Typography>
+        <Typography variant="body1" sx={{ color: colors.textLight }}>{description}</Typography>
+    </Card>
+);
+
 
 const FuelChart = () => {
     const chartRef = useRef(null);
@@ -174,7 +206,7 @@ const MaintenanceChart = () => {
 // --- SAYFA BÖLÜM BİLEŞENLERİ ---
 
 const Header = () => (
-    <AppBar position="sticky" sx={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+    <AppBar position="sticky">
         <Container maxWidth="xl">
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -224,10 +256,10 @@ const ProblemSection = () => (
 
 const SolutionSection = () => {
     const steps = [
-        { icon: <SpeedIcon />, label: '1. Anlık Ölçüm', description: `Konteynerlere monte edilen ultrasonik sensörler, doluluk oranını anlık olarak ölçer ve merkezi platforma iletir.` },
-        { icon: <CloudUploadIcon />, label: '2. Veri İletimi & Analiz', description: 'Veri, GSM ile anında merkezi platforma gönderilir. Harita üzerinden tüm konteynerlerin doluluk durumu anlık olarak renk kodlarıyla izlenir.' },
-        { icon: <RouteIcon />, label: '3. Akıllı Rota Planlama', description: 'Yapay zeka, sadece dolu konteynerleri ve anlık trafik verilerini dikkate alarak her araç için o günün en verimli rotasını oluşturur.' },
-        { icon: <AssessmentIcon />, label: '4. Raporlama ve Strateji', description: 'Toplanan tüm veriler, gelecekteki konteyner yerleşimi, araç ihtiyacı ve bütçeleme gibi stratejik kararlar için paha biçilmez bir kaynak sunar.' },
+        { icon: <SpeedIcon />, label: '1. Akıllı Sensörler', description: `Konteynerlere monte edilen ultrasonik sensörler, doluluk oranını anlık olarak ölçer ve merkezi platforma iletir.` },
+        { icon: <CloudUploadIcon />, label: '2. Merkezi Kontrol Platformu', description: 'Veri, GSM ile anında merkezi platforma gönderilir. Harita üzerinden tüm konteynerlerin doluluk durumu anlık olarak renk kodlarıyla izlenir.' },
+        { icon: <RouteIcon />, label: '3. Yapay Zeka Destekli Rota Optimizasyonu', description: 'Yapay zeka, sadece dolu (%80 ve üzeri) veya dolmak üzere olan konteynerleri hedef alarak toplama listesi oluşturur ve anlık trafik verilerini hesaba katarak en verimli rotayı planlar.' },
+        { icon: <AssessmentIcon />, label: '4. Veri Analizi ve Raporlama', description: 'Sistem, toplanan tüm verileri (atık miktarı, dolma hızları, toplama süreleri vb.) analiz eder. Bu analizler, gelecekteki konteyner yerleşim planlaması, araç ihtiyacı ve bütçeleme gibi stratejik kararlar için paha biçilmez bir kaynak sunar.' },
     ];
 
     return (
@@ -262,12 +294,79 @@ const ImpactDashboard = () => (
             <Box sx={{ textAlign: 'center', mb: 8 }}>
                 <Chip icon={<ShowChartIcon />} label="Projenin Etkisi" color="primary" sx={{ mb: 2 }} />
                 <Typography variant="h2" component="h2">Rakamlarla Kazanımlarımız</Typography>
+                <Typography variant="h5" component="p" sx={{ color: colors.textLight, mt: 2 }}>
+                    Akıllı Atık Yönetim Sisteminin Mezitli'ye Sağladığı Ölçülebilir Faydalar
+                </Typography>
             </Box>
-            <Grid container spacing={4} justifyContent="center">
-                <Grid item xs={12} sm={6} md={6} lg={5}><ChartCard title="Yakıt Tasarrufu (%30-40)"><FuelChart /></ChartCard></Grid>
-                <Grid item xs={12} sm={6} md={6} lg={5}><ChartCard title="Daha Az Karbon Salınımı"><EmissionChart /></ChartCard></Grid>
-                <Grid item xs={12} sm={6} md={6} lg={5}><ChartCard title="Vatandaş Şikayetlerinde Azalma"><ComplaintChart/></ChartCard></Grid>
-                <Grid item xs={12} sm={6} md={6} lg={5}><ChartCard title="Araç Yıpranmasında Azalma"><MaintenanceChart/></ChartCard></Grid>
+            <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+                {/* Ekonomik Faydalar */}
+                <Grid item xs={12} sm={6} md={4}>
+                    <ChartCard title="Yakıt Maliyetlerinde Azalma (%30-40)">
+                        <FuelChart />
+                    </ChartCard>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<HandymanIcon />}
+                        title="Araç Bakım ve Amortisman Giderlerinde Düşüş"
+                        description="Daha az kat edilen mesafe ve optimize edilmiş sürüş rotaları sayesinde araçların yıpranma oranı azalır, bakım maliyetleri düşer."
+                        color="secondary"
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<AccessTimeIcon />}
+                        title="Personel Verimliliğinde Artış"
+                        description="Ekiplerin gereksiz seferler yerine, tam dolu konteynerlere odaklanmasıyla operasyonel verimlilik artar ve zaman kullanımı optimize edilir."
+                        color="success"
+                    />
+                </Grid>
+
+                {/* Çevresel Faydalar */}
+                <Grid item xs={12} sm={6} md={4}>
+                    <ChartCard title="Karbon Salınımında Azalma">
+                        <EmissionChart />
+                    </ChartCard>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}><VolumeOffIcon /><TrafficIcon /></Box>}
+                        title="Gürültü ve Trafik Kirliliğinde Düşüş"
+                        description="Gereksiz çöp toplama seferlerinin önüne geçilerek şehir içinde dolaşan kamyon sayısı ve süresi azalır, bu da gürültü ve trafik yoğunluğunu düşürür."
+                        color="primary"
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<DeleteSweepIcon />}
+                        title="Görüntü ve Koku Kirliliğinin Önlenmesi"
+                        description="Konteynerlerin doluluk oranının anlık takibi sayesinde, taşmalar ve buna bağlı oluşan kötü koku ile görüntü kirliliği sorunları tarihe karışır."
+                        color="warning"
+                    />
+                </Grid>
+
+                {/* Sosyal / Vatandaş Odaklı Faydalar */}
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<SentimentVerySatisfiedIcon />}
+                        title="Vatandaş Memnuniyetinde Artış"
+                        description="Her zaman temiz, taşmayan konteynerler ve daha hijyenik bir çevre sunarak vatandaşların yaşam kalitesi ve belediye hizmetlerinden duyduğu memnuniyet artar."
+                        color="info"
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <ChartCard title="Vatandaş Şikayetlerinde Ciddi Azalma">
+                        <ComplaintChart/>
+                    </ChartCard>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <BenefitCard
+                        icon={<Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}><StarsIcon /><LightbulbIcon /></Box>}
+                        title="Modern ve Yenilikçi Belediye İmajı"
+                        description="Teknoloji ve sürdürülebilirlik odaklı bu proje ile Mezitli, kaynaklarını verimli kullanan, çevreye duyarlı ve öncü bir akıllı şehir olarak konumlanır."
+                        color="success"
+                    />
+                </Grid>
             </Grid>
         </Container>
     </StyledSection>
@@ -277,7 +376,7 @@ const CtaSection = () => (
     <Box sx={{ textAlign: 'center', py: 10, backgroundColor: colors.primaryDark }}>
         <Container maxWidth="md">
             <Typography variant="h2" component="h2" sx={{ color: colors.white, mb: 2 }}>Mezitli İçin Stratejik Bir Yatırım</Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.8)', my: 3, fontSize: '1.2rem' }}>
+            <Typography sx={{ color: 'rgba(255,255,255,0.8)', my: 3, fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } }}>
                  Bu proje, bir harcama değil, geleceğimize yapılmış, kendi kendini finanse eden stratejik bir yatırımdır. Mezitli'yi Türkiye'nin en akıllı ve en temiz ilçelerinden biri yapma yolunda atılmış dev bir adım olacaktır.
             </Typography>
             <Button variant="contained" size="large" sx={{ backgroundColor: colors.secondary, color: colors.primaryDark, fontWeight: 'bold', fontSize: '1.1rem', py: 1.5, px: 6, '&:hover': { backgroundColor: '#FFB74D' }, borderRadius: '50px' }}>
